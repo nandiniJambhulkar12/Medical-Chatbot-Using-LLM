@@ -1,7 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 from src.helper import download_hugging_face_embeddings
 from langchain_pinecone import PineconeVectorStore
-from langchain_openai import ChatOpenAI
+from langchain_together import ChatTogether
+
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
@@ -13,25 +14,34 @@ app = Flask(__name__)
 
 load_dotenv()
 
-PINECONE_API_KEY=os.environ.get('PINECONE_API_KEY')
-OPENAI_API_KEY=os.environ.get('OPENAI_API_KEY')
+# ✅ Load environment variables safely
+PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
+TOGETHER_API_KEY = os.environ.get('TOGETHER_API_KEY')  # ✅ Load Together key
 
+# ✅ Set them into the environment (optional)
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
+# ✅ Load HF embeddings
 embeddings = download_hugging_face_embeddings()
 
-index_name = "medical-bot" 
-# Embed each chunk and upsert the embeddings into your Pinecone index.
+# ✅ Connect to Pinecone index
+index_name = "medical-bot"
 docsearch = PineconeVectorStore.from_existing_index(
     index_name=index_name,
     embedding=embeddings
 )
 
+retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
-retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k":3})
+# ✅ Use Together model instead of OpenAI
+chatModel = ChatTogether(
+    model="mistralai/Mixtral-8x7B-Instruct-v0.1",  # ✅ Serverless and free to use
+    temperature=0.7,
+    together_api_key=os.environ["TOGETHER_API_KEY"]
+)
 
-chatModel = ChatOpenAI(model="gpt-4o")
+# ✅ Prompt template (remains the same)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", system_prompt),
@@ -51,13 +61,11 @@ def index():
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     msg = request.form["msg"]
-    input = msg
-    print(input)
+    print("User Input:", msg)
     response = rag_chain.invoke({"input": msg})
-    print("Response : ", response["answer"])
+    print("Response:", response["answer"])
     return str(response["answer"])
 
 
-
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port= 8080, debug= True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
