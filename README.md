@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Medical-Chatbot-Project
 
-=======
 # Medical-Chatbot-Using-LLM
 MediBot AI is an intelligent medical chatbot powered by advanced Large Language Models (LLMs). It helps users with basic health queries using Retrieval-Augmented Generation (RAG), combining LLMs with medical documents for accurate, context-aware answers.
->>>>>>> 4a31ea7020a0b3215be5959cc1e5e84acc40acd4
 
 
 # How to run?
@@ -67,13 +61,3 @@ open up localhost:
 - Pinecone
 
 =======
-<<<<<<< HEAD
-# Medical-Chabot-Using-LLM
-MediBot AI is an intelligent medical chatbot powered by advanced Large Language Models (LLMs). It helps users with basic health queries using Retrieval-Augmented Generation (RAG), combining LLMs with medical documents for accurate, context-aware answers.
->>>>>>> f2ce92e3274aad5d3bd8418498a1713fd7e02b27
-=======
-# new-chatbot
->>>>>>> 67ea60b52cfa03464e837c8ded7ef3df3939641a
-=======
-
->>>>>>> 4a31ea7020a0b3215be5959cc1e5e84acc40acd4
